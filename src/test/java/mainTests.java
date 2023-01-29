@@ -58,27 +58,32 @@ public class mainTests {
 apach HTTPClient를 사용해서 토큰 가져오는 로직
 기존  HTTPURLCONNECTION을 사용하면 Origin헤더를 추가해야하는데 보안상 추가가안돼서 api를 못가져오는 문제발생
 */
-        String request_url = "https://home.mju.ac.kr/ssoChk.jsp";
 
-        HttpClient httpClient1 = HttpClientBuilder.create().disableRedirectHandling().build();
-        HttpGet httpGet = new HttpGet(request_url);
-        httpGet.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-        httpGet.addHeader("Host","home.mju.ac.kr");
-        httpGet.addHeader("Referer","https://home.mju.ac.kr/user/index.action");
-        httpGet.addHeader("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
-        HttpResponse httpResponse = httpClient1.execute(httpGet);
-        String mainJsessionId = jSessionParser(httpResponse.getHeaders("Set-Cookie")[0].getValue());
-        System.out.println("asdf");
+        HashMap<String,String> header = new HashMap();
+        header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
+        header.put("Host","home.mju.ac.kr");
+        header.put("Referer","https://home.mju.ac.kr/user/index.action");
+        header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
+
+        String request_url = "https://home.mju.ac.kr/ssoChk.jsp";
+        String mainJsessionId = jSessionParser(getHttpGetResult(request_url, header)
+                                                .getHeaders("Set-Cookie")[0]
+                                                .getValue());
+
+
 
 
         request_url = "https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action";
-        httpGet = new HttpGet(request_url);
-        httpGet.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-        httpGet.addHeader("Host","sso1.mju.ac.kr");
-        httpGet.addHeader("Referer","https://home.mju.ac.kr/");
-        httpGet.addHeader("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
-        httpResponse = httpClient1.execute(httpGet);
-        String loginJsessionId = jSessionParser(httpResponse.getHeaders("Set-Cookie")[0].getValue());
+
+        HashMap<String,String> header = new HashMap();
+        header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
+        header.put("Host","sso1.mju.ac.kr");
+        header.put("Referer","https://home.mju.ac.kr/");
+        header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
+
+        String loginJsessionId = jSessionParser(getHttpGetResult(request_url, header)
+                                                .getHeaders("Set-Cookie")[0]
+                                                .getValue());
 
 
 
