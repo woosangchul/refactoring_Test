@@ -40,11 +40,19 @@ public class mainTests {
         return "JSESSIONID="+jsession+"; access_token="+access_token+"; refresh_token="+refresh_token;
     }
 
+    HttpResponse getHttpGetResult(String requestUrl, HashMap<String,String> header) throws IOException {
 
+        HttpClient httpClient1 = HttpClientBuilder.create().disableRedirectHandling().build();
+        HttpGet httpGet = new HttpGet(requestUrl);
+        for (String key : header.keySet()){
+            httpGet.addHeader(key, header.get(key));
+        }
+        return httpClient1.execute(httpGet);
+
+    }
     @Test
     void printTest() throws IOException {
-        String id = "60190525";
-        String pwd   = "wjddk1633@";
+
 
 /*
 apach HTTPClient를 사용해서 토큰 가져오는 로직
@@ -62,6 +70,7 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         String mainJsessionId = jSessionParser(httpResponse.getHeaders("Set-Cookie")[0].getValue());
         System.out.println("asdf");
 
+
         request_url = "https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action";
         httpGet = new HttpGet(request_url);
         httpGet.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
@@ -70,8 +79,6 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         httpGet.addHeader("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
         httpResponse = httpClient1.execute(httpGet);
         String loginJsessionId = jSessionParser(httpResponse.getHeaders("Set-Cookie")[0].getValue());
-
-
 
 
 
@@ -93,6 +100,9 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         httpPost.addHeader("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
         httpPost.addHeader("Accept", "application/json, text/javascript, */*; q=0.01");
 
+
+        String id = "60190525";
+        String pwd   = "wjddk1633@";
 
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("id", id));
