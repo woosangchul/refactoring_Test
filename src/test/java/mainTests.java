@@ -20,22 +20,9 @@ public class mainTests {
         return st.nextToken();
     }
 
-    Map<String, String> tokenParser(String access_token, String refresh_token){
-        Map<String, String> map = new HashMap<>();
-        StringTokenizer st = null;
 
 
-
-        st = new StringTokenizer(access_token.substring(13),";");
-        map.put("access_token", st.nextToken());
-
-        st = new StringTokenizer(refresh_token.substring(14),";");
-        map.put("refresh_token", st.nextToken());
-
-        return map;
-    }
-
-    Map<String, String> zztokenParser(HttpResponse httpResponse){
+    Map<String, String> tokenParser(HttpResponse httpResponse){
         Map<String, String> map = new HashMap<>();
         StringTokenizer st = null;
 
@@ -184,7 +171,8 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         params.put("redirect_uri", "https://home.mju.ac.kr/user/index.action");
 
         httpResponse = getHttpPostResult("https://sso1.mju.ac.kr/oauth2/token2.do", header, params);
-        Map<String, String> map = tokenParser(httpResponse.getHeaders("Set-Cookie")[0].getValue(), httpResponse.getHeaders("Set-Cookie")[1].getValue());
+        Map<String, String> map = tokenParser(httpResponse);
+
         String s_cookie = makeCookieHeader(mainJsessionId, map.get("access_token"), map.get("refresh_token"));
 
 
