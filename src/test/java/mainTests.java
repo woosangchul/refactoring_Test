@@ -117,7 +117,6 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         params.put("passwrd", pwd);
         HttpResponse httpResponse = getHttpPostResult("https://sso1.mju.ac.kr/mju/userCheck.do", header, params);
 
-        // ###############################################################
 
 
         header = new HashMap<String,String>();
@@ -147,33 +146,34 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
 
 
 
-/*
 
 
-        String request_url = "https://sso1.mju.ac.kr/oauth2/token2.do";
-        HttpPost httpPost = new HttpPost(request_url);
-        httpPost.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-        httpPost.addHeader("Host","sso1.mju.ac.kr");
-        httpPost.addHeader("Origin","https://sso1.mju.ac.kr");
-        httpPost.addHeader("Referer","https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action");
-        httpPost.addHeader("Cookie","JSESSIONID="+loginJsessionId);
-        httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
-        httpPost.addHeader("sec-ch-ua","\"Chromium\";v=\"106\", \"Google Chrome\";v=\"106\", \"Not;A=Brand\";v=\"99\"");
-        httpPost.addHeader("Sec-Fetch-Dest","document");
-        httpPost.addHeader("Sec-Fetch-Mode","navigate");
-        httpPost.addHeader("Sec-Fetch-Site","same-origin");
-        httpPost.addHeader("Sec-Fetch-User","?1");
-        httpPost.addHeader("Upgrade-Insecure-Requests", "1");
-        httpPost.addHeader("Sec-ch-ua-platform", "Windows");
-        httpPost.addHeader("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
+        header = new HashMap<String,String>();
+        header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
+        header.put("Host","sso1.mju.ac.kr");
+        header.put("Origin","https://sso1.mju.ac.kr");
+        header.put("Referer","https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action");
+        header.put("Cookie","JSESSIONID="+loginJsessionId);
+        header.put("Content-Type", "application/x-www-form-urlencoded");
+        header.put("sec-ch-ua","\"Chromium\";v=\"106\", \"Google Chrome\";v=\"106\", \"Not;A=Brand\";v=\"99\"");
+        header.put("Sec-Fetch-Dest","document");
+        header.put("Sec-Fetch-Mode","navigate");
+        header.put("Sec-Fetch-Site","same-origin");
+        header.put("Sec-Fetch-User","?1");
+        header.put("Upgrade-Insecure-Requests", "1");
+        header.put("Sec-ch-ua-platform", "Windows");
+        header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
 
-        HttpClient httpClient2 = HttpClientBuilder.create().disableRedirectHandling().build();
-        httpPost.setEntity(new UrlEncodedFormEntity(params));
-        httpResponse = httpClient2.execute(httpPost);
+        params = new HashMap<>();
+        params.put("user_id", id);
+        params.put("user_pwd", pwd);
+        params.put("redirect_uri", "https://home.mju.ac.kr/user/index.action");
+
+        httpResponse = getHttpPostResult("https://sso1.mju.ac.kr/oauth2/token2.do", header, params);
         Map<String, String> map = tokenParser(httpResponse.getHeaders("Set-Cookie")[0].getValue(), httpResponse.getHeaders("Set-Cookie")[1].getValue());
         String s_cookie = makeCookieHeader(mainJsessionId, map.get("access_token"), map.get("refresh_token"));
 
-*/
+
 
                 /*
                 원래 삭제되어잇던부분
