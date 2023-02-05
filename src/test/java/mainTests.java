@@ -15,17 +15,11 @@ import java.util.*;
 
 public class mainTests {
 
-    String jSessionParser(String jSessionId){
-        StringTokenizer st = new StringTokenizer(jSessionId.substring(11), ";");
-
-        return st.nextToken();
-
-    }
-
-    String zzjSessionParser(HttpResponse httpResponse){
+    String jSessionParser(HttpResponse httpResponse){
         StringTokenizer st = new StringTokenizer(httpResponse.getHeaders("Set-Cookie")[0].getValue().substring(11), ";");
         return st.nextToken();
     }
+
     Map<String, String> tokenParser(String access_token, String refresh_token){
         Map<String, String> map = new HashMap<>();
         StringTokenizer st = null;
@@ -73,10 +67,7 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
 
         String request_url = "https://home.mju.ac.kr/ssoChk.jsp";
-        String mainJsessionId = jSessionParser(getHttpGetResult(request_url, header)
-                                                .getHeaders("Set-Cookie")[0]
-                                                .getValue());
-
+        String mainJsessionId = jSessionParser(getHttpGetResult(request_url, header));
 
 
         request_url = "https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action";
