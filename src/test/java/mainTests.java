@@ -49,6 +49,24 @@ public class mainTests {
 
     }
 
+    HttpResponse getHttpPostResult(String request_url, HashMap<String, String> header, String id, String pwd) throws IOException {
+
+        HttpClient httpClient2 = HttpClientBuilder.create().disableRedirectHandling().build();
+
+        HttpPost httpPost = new HttpPost(request_url);
+        for (String key : header.keySet()){
+            httpPost.addHeader(key, header.get(key));
+        }
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("id", id));
+        params.add(new BasicNameValuePair("passwrd", pwd));
+        httpPost.setEntity(new UrlEncodedFormEntity(params));
+        return httpClient2.execute(httpPost);
+
+
+    }
+
 
     @Test
     void printTest() throws IOException {
@@ -78,9 +96,7 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         header.put("Referer","https://home.mju.ac.kr/");
         header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
 
-        String loginJsessionId = jSessionParser(getHttpGetResult(request_url, header)
-                                                .getHeaders("Set-Cookie")[0]
-                                                .getValue());
+        String loginJsessionId = jSessionParser(getHttpGetResult(request_url, header));
 
 
 
