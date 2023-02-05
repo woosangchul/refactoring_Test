@@ -34,6 +34,20 @@ public class mainTests {
 
         return map;
     }
+
+    Map<String, String> zztokenParser(HttpResponse httpResponse){
+        Map<String, String> map = new HashMap<>();
+        StringTokenizer st = null;
+
+        st = new StringTokenizer( httpResponse.getHeaders("Set-Cookie")[0].getValue().substring(13),";");
+        map.put("access_token", st.nextToken());
+
+        st = new StringTokenizer(httpResponse.getHeaders("Set-Cookie")[1].getValue().substring(14),";");
+        map.put("refresh_token", st.nextToken());
+
+        return map;
+    }
+
     String makeCookieHeader(String jsession, String access_token, String refresh_token){
         return "JSESSIONID="+jsession+"; access_token="+access_token+"; refresh_token="+refresh_token;
     }
