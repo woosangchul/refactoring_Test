@@ -15,7 +15,6 @@ import java.util.*;
 
 public class mainTests {
 
-
     String jSessionParser(String jSessionId){
         StringTokenizer st = new StringTokenizer(jSessionId.substring(11), ";");
 
@@ -38,6 +37,17 @@ public class mainTests {
     }
     String makeCookieHeader(String jsession, String access_token, String refresh_token){
         return "JSESSIONID="+jsession+"; access_token="+access_token+"; refresh_token="+refresh_token;
+    }
+
+    HttpResponse getHttpGetResult(String requestUrl, HashMap<String,String> header) throws IOException {
+
+        HttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
+        HttpGet httpGet = new HttpGet(requestUrl);
+        for (String key : header.keySet()){
+            httpGet.addHeader(key, header.get(key));
+        }
+        return httpClient.execute(httpGet);
+
     }
 
 
@@ -66,7 +76,7 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
 
         request_url = "https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action";
 
-        HashMap<String,String> header = new HashMap();
+        header = new HashMap();
         header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
         header.put("Host","sso1.mju.ac.kr");
         header.put("Referer","https://home.mju.ac.kr/");
@@ -103,7 +113,7 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         params.add(new BasicNameValuePair("id", id));
         params.add(new BasicNameValuePair("passwrd", pwd));
         httpPost.setEntity(new UrlEncodedFormEntity(params));
-        httpResponse = httpClient2.execute(httpPost);
+        HttpResponse httpResponse = httpClient2.execute(httpPost);
 
 
 
@@ -178,7 +188,7 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
 
         request_url = "https://home.mju.ac.kr/user/index.action";
 
-        httpGet = new HttpGet(request_url);
+        HttpGet httpGet = new HttpGet(request_url);
         httpGet.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
         httpGet.addHeader("Host","home.mju.ac.kr");
         httpGet.addHeader("Referer","https://sso1.mju.ac.kr/");
