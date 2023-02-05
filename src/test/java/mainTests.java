@@ -49,20 +49,22 @@ public class mainTests {
 
     }
 
-    HttpResponse getHttpPostResult(String request_url, HashMap<String, String> header, String id, String pwd) throws IOException {
+    HttpResponse getHttpPostResult(String request_url, HashMap<String, String> header, HashMap<String,String> params) throws IOException {
 
-        HttpClient httpClient2 = HttpClientBuilder.create().disableRedirectHandling().build();
+        HttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
 
         HttpPost httpPost = new HttpPost(request_url);
         for (String key : header.keySet()){
             httpPost.addHeader(key, header.get(key));
         }
 
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("id", id));
-        params.add(new BasicNameValuePair("passwrd", pwd));
-        httpPost.setEntity(new UrlEncodedFormEntity(params));
-        return httpClient2.execute(httpPost);
+        List<NameValuePair> parameter = new ArrayList<NameValuePair>();
+        for (String key : params.keySet()){
+            parameter.add(new BasicNameValuePair(key,params.get(key)));
+        }
+
+        httpPost.setEntity(new UrlEncodedFormEntity(parameter));
+        return httpClient.execute(httpPost);
 
 
     }
@@ -83,12 +85,8 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         header.put("Host","home.mju.ac.kr");
         header.put("Referer","https://home.mju.ac.kr/user/index.action");
         header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
+        String mainJsessionId = jSessionParser(getHttpGetResult("https://home.mju.ac.kr/ssoChk.jsp", header));
 
-        String request_url = "https://home.mju.ac.kr/ssoChk.jsp";
-        String mainJsessionId = jSessionParser(getHttpGetResult(request_url, header));
-
-
-        request_url = "https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action";
 
         header = new HashMap();
         header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
@@ -96,41 +94,33 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         header.put("Referer","https://home.mju.ac.kr/");
         header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
 
-        String loginJsessionId = jSessionParser(getHttpGetResult(request_url, header));
+        String loginJsessionId = jSessionParser(getHttpGetResult("https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action", header));
 
 
+        header = new HashMap<String,String>();
+        header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
+        header.put("Host","sso1.mju.ac.kr");
+        header.put("Origin","https://sso1.mju.ac.kr");
+        header.put("Referer","https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action");
+        header.put("Cookie","JSESSIONID="+loginJsessionId);
+        header.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        header.put("sec-ch-ua","\"Chromium\";v=\"106\", \"Google Chrome\";v=\"106\", \"Not;A=Brand\";v=\"99\"");
+        header.put("sec-ch-ua-mobile","?0");
+        header.put("Sec-Fetch-Dest","empty");
+        header.put("Sec-Fetch-Mode","cors");
+        header.put("Sec-Fetch-Site","same-origin");
+        header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
+        header.put("Accept", "application/json, text/javascript, */*; q=0.01");
 
+        HashMap<String,String> zzparams = new HashMap<>();
+        zzparams.put("id", id);
+        zzparams.put("passwrd", pwd);
+        HttpResponse httpResponse = getHttpPostResult("https://sso1.mju.ac.kr/mju/userCheck.do", header, zzparams);
 
+        // ###############################################################
 
 
         HttpClient httpClient2 = HttpClientBuilder.create().disableRedirectHandling().build();
-        request_url = "https://sso1.mju.ac.kr/mju/userCheck.do";
-        HttpPost httpPost = new HttpPost(request_url);
-        httpPost.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-        httpPost.addHeader("Host","sso1.mju.ac.kr");
-        httpPost.addHeader("Origin","https://sso1.mju.ac.kr");
-        httpPost.addHeader("Referer","https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action");
-        httpPost.addHeader("Cookie","JSESSIONID="+loginJsessionId);
-        httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        httpPost.addHeader("sec-ch-ua","\"Chromium\";v=\"106\", \"Google Chrome\";v=\"106\", \"Not;A=Brand\";v=\"99\"");
-        httpPost.addHeader("sec-ch-ua-mobile","?0");
-        httpPost.addHeader("Sec-Fetch-Dest","empty");
-        httpPost.addHeader("Sec-Fetch-Mode","cors");
-        httpPost.addHeader("Sec-Fetch-Site","same-origin");
-        httpPost.addHeader("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
-        httpPost.addHeader("Accept", "application/json, text/javascript, */*; q=0.01");
-
-
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair("id", id));
-        params.add(new BasicNameValuePair("passwrd", pwd));
-        httpPost.setEntity(new UrlEncodedFormEntity(params));
-        HttpResponse httpResponse = httpClient2.execute(httpPost);
-
-
-
-
-        httpClient2 = HttpClientBuilder.create().disableRedirectHandling().build();
         request_url = "https://sso1.mju.ac.kr/login/ajaxActionLogin2.do";
         httpPost = new HttpPost(request_url);
         httpPost.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
