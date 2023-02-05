@@ -21,6 +21,11 @@ public class mainTests {
         return st.nextToken();
 
     }
+
+    String zzjSessionParser(HttpResponse httpResponse){
+        StringTokenizer st = new StringTokenizer(httpResponse.getHeaders("Set-Cookie")[0].getValue().substring(11), ";");
+        return st.nextToken();
+    }
     Map<String, String> tokenParser(String access_token, String refresh_token){
         Map<String, String> map = new HashMap<>();
         StringTokenizer st = null;
