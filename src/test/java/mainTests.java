@@ -4,9 +4,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.jupiter.api.Test;
+import parser.CookieParser;
+import parser.CookieParserImpl;
 import service.UserServiceImpl;
 
 import java.io.IOException;
@@ -51,7 +54,6 @@ public class mainTests {
     }
 
     HttpResponse getHttpPostResult(String request_url, HashMap<String, String> header, HashMap<String,String> params) throws IOException {
-
         HttpClient httpClient = HttpClientBuilder.create().disableRedirectHandling().build();
 
         HttpPost httpPost = new HttpPost(request_url);
@@ -75,7 +77,7 @@ public class mainTests {
     void printTest() throws IOException {
         String id = "60190525";
         String pwd   = "wjddk1633@";
-
+        CookieParser parser = new CookieParserImpl();
 /*
 apach HTTPClient를 사용해서 토큰 가져오는 로직
 기존  HTTPURLCONNECTION을 사용하면 Origin헤더를 추가해야하는데 보안상 추가가안돼서 api를 못가져오는 문제발생
@@ -86,7 +88,7 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         header.put("Host","home.mju.ac.kr");
         header.put("Referer","https://home.mju.ac.kr/user/index.action");
         header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
-        String mainJsessionId = jSessionParser(getHttpGetResult("https://home.mju.ac.kr/ssoChk.jsp", header));
+        String mainJsessionId = parser.jSessionParser(getHttpGetResult("https://home.mju.ac.kr/ssoChk.jsp", header));
 
 
         header = new HashMap();
@@ -95,7 +97,7 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         header.put("Referer","https://home.mju.ac.kr/");
         header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
 
-        String loginJsessionId = jSessionParser(getHttpGetResult("https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action", header));
+        String loginJsessionId = parser.jSessionParser(getHttpGetResult("https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action", header));
 
 
         header = new HashMap<String,String>();
@@ -171,7 +173,7 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         params.put("redirect_uri", "https://home.mju.ac.kr/user/index.action");
 
         httpResponse = getHttpPostResult("https://sso1.mju.ac.kr/oauth2/token2.do", header, params);
-        Map<String, String> map = tokenParser(httpResponse);
+        Map<String, String> map = parser.tokenParser(httpResponse);
 
         String s_cookie = makeCookieHeader(mainJsessionId, map.get("access_token"), map.get("refresh_token"));
 
