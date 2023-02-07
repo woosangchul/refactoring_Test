@@ -71,6 +71,16 @@ public class mainTests {
 
 
     }
+    HttpResponse getMainJSessionResponse() throws IOException {
+
+        HashMap<String,String> header = new HashMap();
+        header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
+        header.put("Host","home.mju.ac.kr");
+        header.put("Referer","https://home.mju.ac.kr/user/index.action");
+        header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
+        return getHttpGetResult("https://home.mju.ac.kr/ssoChk.jsp", header);
+
+    }
 
 
     @Test
