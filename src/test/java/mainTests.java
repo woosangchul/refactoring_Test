@@ -69,44 +69,44 @@ public class mainTests {
         httpPost.setEntity(new UrlEncodedFormEntity(parameter));
         return httpClient.execute(httpPost);
 
-
     }
     HttpResponse getMainJSessionResponse() throws IOException {
-
         HashMap<String,String> header = new HashMap();
         header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
         header.put("Host","home.mju.ac.kr");
         header.put("Referer","https://home.mju.ac.kr/user/index.action");
         header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
+
         return getHttpGetResult("https://home.mju.ac.kr/ssoChk.jsp", header);
 
     }
 
-
-    @Test
-    void printTest() throws IOException {
-        String id = "60190525";
-        String pwd   = "wjddk1633@";
-        CookieParser parser = new CookieParserImpl();
-/*
-apach HTTPClient를 사용해서 토큰 가져오는 로직
-기존  HTTPURLCONNECTION을 사용하면 Origin헤더를 추가해야하는데 보안상 추가가안돼서 api를 못가져오는 문제발생
-*/
-
-
-        String mainJsessionId = parser.jSessionParser(getMainJSessionResponse());
-
-
-        HashMap<String,String>  header = new HashMap();
+    HttpResponse getLoginJSessionResponse() throws IOException {
+        HashMap<String,String> header = new HashMap();
         header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
         header.put("Host","sso1.mju.ac.kr");
         header.put("Referer","https://home.mju.ac.kr/");
         header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
 
-        String loginJsessionId = parser.jSessionParser(getHttpGetResult("https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action", header));
+        return getHttpGetResult("https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action", header);
+    }
+
+    @Test
+    void printTest() throws IOException {
+        /*
+apach HTTPClient를 사용해서 토큰 가져오는 로직
+기존  HTTPURLCONNECTION을 사용하면 Origin헤더를 추가해야하는데 보안상 추가가안돼서 api를 못가져오는 문제발생
+*/
 
 
-        header = new HashMap<String,String>();
+        String id = "60190525";
+        String pwd   = "wjddk1633@";
+        CookieParser parser = new CookieParserImpl();
+
+        String mainJsessionId = parser.jSessionParser(getMainJSessionResponse());
+        String loginJsessionId = parser.jSessionParser(getLoginJSessionResponse());
+
+        HashMap<String,String> header = new HashMap<String,String>();
         header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
         header.put("Host","sso1.mju.ac.kr");
         header.put("Origin","https://sso1.mju.ac.kr");
