@@ -93,15 +93,11 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
 기존  HTTPURLCONNECTION을 사용하면 Origin헤더를 추가해야하는데 보안상 추가가안돼서 api를 못가져오는 문제발생
 */
 
-        HashMap<String,String> header = new HashMap();
-        header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-        header.put("Host","home.mju.ac.kr");
-        header.put("Referer","https://home.mju.ac.kr/user/index.action");
-        header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
-        String mainJsessionId = parser.jSessionParser(getHttpGetResult("https://home.mju.ac.kr/ssoChk.jsp", header));
+
+        String mainJsessionId = parser.jSessionParser(getMainJSessionResponse());
 
 
-        header = new HashMap();
+        HashMap<String,String>  header = new HashMap();
         header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
         header.put("Host","sso1.mju.ac.kr");
         header.put("Referer","https://home.mju.ac.kr/");
@@ -183,7 +179,7 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         params.put("redirect_uri", "https://home.mju.ac.kr/user/index.action");
 
         httpResponse = getHttpPostResult("https://sso1.mju.ac.kr/oauth2/token2.do", header, params);
-        Map<String, String> map = parser.tokenParser(httpResponse);
+        Map<String, String> map = tokenParser(httpResponse);
 
         String s_cookie = makeCookieHeader(mainJsessionId, map.get("access_token"), map.get("refresh_token"));
 

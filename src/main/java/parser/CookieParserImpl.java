@@ -23,6 +23,7 @@ public class CookieParserImpl implements CookieParser{
         st = new StringTokenizer(httpResponse.getHeaders("Set-Cookie")[1].getValue().substring(14),";");
         sb.append("refresh_token"+st.nextToken());
 
+        return sb.toString();
 
 
 
