@@ -128,6 +128,7 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         String mainJsessionId = parser.jSessionParser(getMainJSessionResponse());
         String loginJsessionId = parser.jSessionParser(getLoginJSessionResponse());
 
+
         HashMap<String,String> header = new HashMap<String,String>();
         header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
         header.put("Host","sso1.mju.ac.kr");
@@ -146,9 +147,10 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         HashMap<String,String> params = new HashMap<>();
         params.put("id", id);
         params.put("passwrd", pwd);
-        HttpResponse httpResponse = getHttpPostResult("https://sso1.mju.ac.kr/mju/userCheck.do", header, params);
-        HttpResponse zzhttpResponse = getLoginProcStep1(loginJsessionId, id, pwd);
+        HttpResponse httpResponse = getLoginProcStep1(loginJsessionId, id, pwd);
         System.out.println(1);
+
+
 
 
         header = new HashMap<String,String>();
