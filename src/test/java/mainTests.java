@@ -131,13 +131,37 @@ public class mainTests {
         header.put("Upgrade-Insecure-Requests", "1");
         header.put("Sec-ch-ua-platform", "Windows");
 
-        HashMap<> params = new HashMap<String, String>();
+        HashMap<String, String> params = new HashMap<String, String>();
         params.put("user_id", id);
         params.put("user_pwd", pwd);
         params.put("redirect_uri", "https://home.mju.ac.kr/user/index.action");
 
         return getHttpPostResult("https://sso1.mju.ac.kr/login/ajaxActionLogin2.do", header, params);
 
+    }
+    HttpResponse getLoginProcStep3(String loginJsessionId, String id, String pwd) throws IOException {
+        HashMap<String, String> header = new HashMap<String,String>();
+        header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
+        header.put("Host","sso1.mju.ac.kr");
+        header.put("Origin","https://sso1.mju.ac.kr");
+        header.put("Referer","https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action");
+        header.put("Cookie","JSESSIONID="+loginJsessionId);
+        header.put("Content-Type", "application/x-www-form-urlencoded");
+        header.put("sec-ch-ua","\"Chromium\";v=\"106\", \"Google Chrome\";v=\"106\", \"Not;A=Brand\";v=\"99\"");
+        header.put("Sec-Fetch-Dest","document");
+        header.put("Sec-Fetch-Mode","navigate");
+        header.put("Sec-Fetch-Site","same-origin");
+        header.put("Sec-Fetch-User","?1");
+        header.put("Upgrade-Insecure-Requests", "1");
+        header.put("Sec-ch-ua-platform", "Windows");
+        header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("user_id", id);
+        params.put("user_pwd", pwd);
+        params.put("redirect_uri", "https://home.mju.ac.kr/user/index.action");
+
+        return getHttpPostResult("https://sso1.mju.ac.kr/oauth2/token2.do", header, params);
     }
 
     @Test
@@ -154,107 +178,11 @@ apach HTTPClient를 사용해서 토큰 가져오는 로직
         String mainJsessionId = parser.jSessionParser(getMainJSessionResponse());
         String loginJsessionId = parser.jSessionParser(getLoginJSessionResponse());
 
-        HashMap<String,String> header = new HashMap<String,String>();
-        header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-        header.put("Host","sso1.mju.ac.kr");
-        header.put("Origin","https://sso1.mju.ac.kr");
-        header.put("Referer","https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action");
-        header.put("Cookie","JSESSIONID="+loginJsessionId);
-        header.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-        header.put("sec-ch-ua","\"Chromium\";v=\"106\", \"Google Chrome\";v=\"106\", \"Not;A=Brand\";v=\"99\"");
-        header.put("sec-ch-ua-mobile","?0");
-        header.put("Sec-Fetch-Dest","empty");
-        header.put("Sec-Fetch-Mode","cors");
-        header.put("Sec-Fetch-Site","same-origin");
-        header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
-        header.put("Accept", "application/json, text/javascript, */*; q=0.01");
-
-        HashMap<String,String> params = new HashMap<>();
-        params.put("id", id);
-        params.put("passwrd", pwd);
-        HttpResponse httpResponse = getLoginProcStep1(loginJsessionId, id, pwd);
-
-        httpResponse = getLoginProcStep2(loginJsessionId, id, pwd);
-
-        header = new HashMap<String,String>();
-        header.put("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-        header.put("Host","sso1.mju.ac.kr");
-        header.put("Origin","https://sso1.mju.ac.kr");
-        header.put("Referer","https://sso1.mju.ac.kr/login.do?redirect_uri=https://home.mju.ac.kr/user/index.action");
-        header.put("Cookie","JSESSIONID="+loginJsessionId);
-        header.put("Content-Type", "application/x-www-form-urlencoded");
-        header.put("sec-ch-ua","\"Chromium\";v=\"106\", \"Google Chrome\";v=\"106\", \"Not;A=Brand\";v=\"99\"");
-        header.put("Sec-Fetch-Dest","document");
-        header.put("Sec-Fetch-Mode","navigate");
-        header.put("Sec-Fetch-Site","same-origin");
-        header.put("Sec-Fetch-User","?1");
-        header.put("Upgrade-Insecure-Requests", "1");
-        header.put("Sec-ch-ua-platform", "Windows");
-        header.put("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7");
-
-        params = new HashMap<>();
-        params.put("user_id", id);
-        params.put("user_pwd", pwd);
-        params.put("redirect_uri", "https://home.mju.ac.kr/user/index.action");
-
-        httpResponse = getHttpPostResult("https://sso1.mju.ac.kr/oauth2/token2.do", header, params);
-        Map<String, String> map = tokenParser(httpResponse);
-
+        getLoginProcStep1(loginJsessionId, id, pwd);
+        getLoginProcStep2(loginJsessionId, id, pwd);
+        Map<String, String> map = tokenParser(getLoginProcStep3(loginJsessionId, id, pwd));
         String s_cookie = makeCookieHeader(mainJsessionId, map.get("access_token"), map.get("refresh_token"));
-
-
-
-                /*
-                원래 삭제되어잇던부분
-        BufferedReader reader = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
-        String inputLine;
-        StringBuffer response = new StringBuffer();
-        while((inputLine = reader.readLine()) != null){
-            response.append(inputLine);
-        }
-        reader.close();
-
-                 */
-
-
-/*
-        request_url = "https://home.mju.ac.kr/user/index.action";
-
-        HttpGet httpGet = new HttpGet(request_url);
-        httpGet.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-        httpGet.addHeader("Host","home.mju.ac.kr");
-        httpGet.addHeader("Referer","https://sso1.mju.ac.kr/");
-        httpGet.addHeader("Cookie", s_cookie);
-        httpResponse = httpClient2.execute(httpGet);
-
-
-
-
-        request_url = "https://home.mju.ac.kr/mainIndex/myHomeworkList.action?command=&tab=homework";
-
-        httpGet = new HttpGet(request_url);
-        httpGet.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-        httpGet.addHeader("Host","home.mju.ac.kr");
-        httpGet.addHeader("Referer","https://home.mju.ac.kr/user/index.action");
-        httpGet.addHeader("Cookie", s_cookie);
-        httpResponse = httpClient2.execute(httpGet);
-
-        System.out.println("asdf");
-*/
-
-        /*
-        원래삭제되어잇던부분
-        BufferedReader reader = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent(),"UTF-8"));
-        String inputLine;
-        StringBuffer response = new StringBuffer();
-        while((inputLine = reader.readLine()) != null){
-            response.append(inputLine);
-        }
-        reader.close();
-*/
-
-
-        //System.out.println(s_cookie);
+        System.out.printf("1");
 
 
     }
